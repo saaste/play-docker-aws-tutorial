@@ -1,12 +1,16 @@
 # play-docker-aws-tutorial
-101 tutorial for publishing Play app to Amazon Web Services (AWS) using Docker. This tutorial explain the following steps:
+101 tutorial for publishing Play app to Amazon Web Services (AWS) using Docker. This tutorial explains how to:
 
-- How to create a new Play project
-- How to create a new Docker container
-- How to setup AWS EC3 instance
-- How to publish container to EC3 instance
+- Install necessary tools
+- Create a new Play project
+- Create a new Docker container
+- Setup AWS EC3 instance
+- Publish container to EC3 instance
 
-## Step 1: Create a new Play project
+## Step 1: Install necessary tools
+**TODO**
+
+## Step 2: Create a new Play project
 
 Create a new app using `Activator`
 
@@ -39,11 +43,11 @@ Open browser and go to `http://localhost:9000/` and you should see the following
 
 Your Play app is now created! That was simple!
 
-## Step 2: Create a new Docker container
+## Step 3: Create a new Docker container
 **TODO**
 
-## Step 3: Setup AWS EC3 instance
+## Step 4: Setup AWS EC3 instance
 **TODO**
 
-## Step 4: Publish container to EC3 instance
+## Step 5: Publish container to EC3 instance
 **TODO**
