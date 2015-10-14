@@ -64,7 +64,7 @@ It will create `target/docker/stage` directory which contains all the files for 
 
 So what are *image* and *container*? A *container* is a stripped-to-basics version of a Linux operation system. An *image* is software you load into a container.
 
-In that directory there is a file called `Dockerfile`. Add the following line to the file before the last CMD line:
+In that directory there is a file called `Dockerfile`. Add the following line to the file after RUN line:
 
 ```
 EXPOSE 9000
@@ -77,9 +77,11 @@ FROM java:latest
 WORKDIR /opt/docker
 ADD opt /opt
 RUN ["chown", "-R", "daemon:daemon", "."]
+
+EXPOSE 9000
+
 USER daemon
 ENTRYPOINT ["bin/example-app-1"]
-EXPOSE 9000
 CMD []
 ```
 
