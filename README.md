@@ -197,14 +197,35 @@ Click to instance id to open the details of your brand new instance.
 
 Here you can see all the instances. When know the instance is up and running when Instance State has a green circle with the text `running`.
 
-
-
-
-
-
-
-
-
-
 ## Step 5: Publish container to EC3 instance
-**TODO**
+
+This tutorial will use [Docker Hub](https://hub.docker.com/) for storing the Docker container. First we will publish the local container to Docker Hub and then we fetch it from there and save to EC3 instance.
+
+Create yourself a Docker Hub account if you don't have it yet and log in.
+
+Next you have to create a new repository for your container so click `Create Repository` button.
+
+Give your repository a new. For this tutorial we will use `example-repo-1`. You can leave descriptions empty and visibility to public. You can also create private repos, but for the sake of simplicity we use public repos.
+
+First we need to log in using docker:
+
+```
+$ docker login
+```
+
+This will asked your credentials and save them for the future use.
+
+Go to your stage folder and run the following commands:
+
+```
+$ docker build -t yourusername/example-repo-1 .
+$ docker push yourusername/example-repo-1
+```
+
+This will build a new image for the repository. Then it send the created image to the repository. Be patient because this might take awhile.
+
+... host went down can't continue.
+
+
+
+
