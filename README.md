@@ -52,7 +52,84 @@ Open browser and go to `http://localhost:9000/` and you should see the following
 Your Play app is now created! That was simple!
 
 ## Step 3: Create a new Docker container
-**TODO**
+
+Go to your application directory and run the following command:
+
+```
+$ activator docker:stage
+```
+
+It will create `target/docker/stage` directory which contains all the files for the Docker image.
+
+So what are *image* and *container*? A *container* is a stripped-to-basics version of a Linux operation system. An *image* is software you load into a container.
+
+In that directory there is a file called `Dockerfile`. Add the following line to the file before the last CMD line:
+
+```
+EXPOSE 9000
+```
+
+So your `Dockerfile` might look something like this:
+
+```
+FROM java:latest
+WORKDIR /opt/docker
+ADD opt /opt
+RUN ["chown", "-R", "daemon:daemon", "."]
+USER daemon
+ENTRYPOINT ["bin/example-app-1"]
+EXPOSE 9000
+CMD []
+```
+
+Next open Docker Quickstart Terminal and run the following command in the `stage` directory:
+
+```
+$ docker build -t example-app-1 .
+```
+
+This command reads the Dockerfile in the current directory and builds an image called **example-app-1**.
+
+You can run the following command and verify the new is on your computer.
+
+```
+$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+example-app-1       latest              89e9d439ef8d        8 minutes ago       894.1 MB
+```
+
+Next you can run the image.
+
+```
+$ docker run --name example-container-1 -p 80:9000 example-app-1
+[info] - play.api.Play - Application started (Prod)
+[info] - play.core.server.NettyServer - Listening for HTTP on /0:0:0:0:0:0:0:0:9000
+```
+
+This will create a new container by name `example-container-1` and it will serve our app in port 80.
+
+But how do you open your app in browser? First, hit `Ctrl+C` to stop the container.
+Then you can start it again using the following command:
+
+```
+$ docker start example-container-1
+```
+
+Next you have to find what is the external IP address of your docker container. One easy way is to use the following command:
+
+```
+$ docker-machine inspect default | grep IPAddress
+        "IPAddress": "192.168.99.100",
+```
+
+So, now you can open your browser and go to http://192.168.99.100/ and you should see text saying "Your new application is ready"
+
+
+
+
+
+
+
 
 ## Step 4: Setup AWS EC3 instance
 **TODO**
