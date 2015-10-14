@@ -105,7 +105,7 @@ example-app-1       latest              89e9d439ef8d        8 minutes ago       
 The image is ready. Now we can run it locally.
 
 ```
-$ docker run --name example-container-1 -p 80:9000 example-app-1
+$ docker run --name example-container-1 -d -p 80:9000 example-app-1
 [info] - play.api.Play - Application started (Prod)
 [info] - play.core.server.NettyServer - Listening for HTTP on /0:0:0:0:0:0:0:0:9000
 ```
@@ -114,13 +114,7 @@ This will create a new container by name `example-container-1` and it will serve
 
 But how do you open your app in browser? You need the IP address of the container. But how do you know what is the IP address?
 
-First, hit `Ctrl+C` to stop the container. Then you can start it again using the following command:
-
-```
-$ docker start example-container-1
-```
-
-Next you have to find what is the external IP address of your docker container. One easy way is to use the following command:
+One easy way is to use the following command:
 
 ```
 $ docker-machine inspect default | grep IPAddress
@@ -224,7 +218,54 @@ $ docker push yourusername/example-repo-1
 
 This will build a new image for the repository. Then it send the created image to the repository. Be patient because this might take awhile.
 
-... host went down can't continue.
+Remember the key you made before. Now you need it. Go to the directory where you saved the key file `test-aws-key.pem´.
+
+You have to check the IP address of the instance from AWS console. Select `EC2`, then `Instances` and finally select your instance. Now click `Connect` and you'll get a popup guiding next steps:
+
+```
+$ chmod 400 test-aws-key.pem
+$ ssh -i "test-aws-key.pem" ec2-user@YOURIPADDRESS
+```
+
+Now you are connected to your instance. Then run the following command to update the instance:
+
+```
+$ sudo yum update
+```
+
+Then you have to install Docker:
+
+```
+$ sudo yum install -y docker
+```
+
+...and launch the Docker service:
+
+```
+$ sudo service docker start
+```
+
+...and add current user to docker group:
+
+```
+$ sudo usermod -a -G docker ec2-user
+```
+
+Now log out using `exit` command and log back in ssh just like before. Then pull the image from the repository:
+
+```
+$ docker pull yourusername/example-repo-1
+```
+
+And finally we can run the image!
+
+```
+$ docker run --name example-app-1 -d -p 80:9000 yourusername/example-repo-1
+```
+
+If you open your instance IP to browser you should see the page saying `Your new application is ready."
+
+You are done! Your Play application is now running on AWS!
 
 
 
