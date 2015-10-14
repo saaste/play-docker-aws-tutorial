@@ -8,7 +8,15 @@
 - Publish container to EC3 instance
 
 ## Step 1: Install necessary tools
-**TODO**
+This instructions are for Mac OS X:
+
+First Typesafe Activator
+
+```
+$ brew install typesafe-activator
+```
+
+Then download [Docker Toolbox](https://www.docker.com/toolbox) and install it using the installer.
 
 ## Step 2: Create a new Play project
 
