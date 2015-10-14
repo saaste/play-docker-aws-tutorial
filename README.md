@@ -4,6 +4,7 @@
 - Install necessary tools
 - Create a new Play project
 - Create a new Docker container
+- Run container locally
 - Setup AWS EC3 instance
 - Publish container to EC3 instance
 
@@ -97,8 +98,9 @@ $ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
 example-app-1       latest              89e9d439ef8d        8 minutes ago       894.1 MB
 ```
+## Step 4: Run docker image locally
 
-Next you can run the image.
+The image is ready. Now we can run it locally.
 
 ```
 $ docker run --name example-container-1 -p 80:9000 example-app-1
@@ -108,8 +110,9 @@ $ docker run --name example-container-1 -p 80:9000 example-app-1
 
 This will create a new container by name `example-container-1` and it will serve our app in port 80.
 
-But how do you open your app in browser? First, hit `Ctrl+C` to stop the container.
-Then you can start it again using the following command:
+But how do you open your app in browser? You need the IP address of the container. But how do you know what is the IP address?
+
+First, hit `Ctrl+C` to stop the container. Then you can start it again using the following command:
 
 ```
 $ docker start example-container-1
@@ -122,7 +125,13 @@ $ docker-machine inspect default | grep IPAddress
         "IPAddress": "192.168.99.100",
 ```
 
-So, now you can open your browser and go to http://192.168.99.100/ and you should see text saying "Your new application is ready"
+So, now you can open your browser and go to `http://192.168.99.100/` and you should see a text saying "Your new application is ready". Your app is running!
+
+Now you can stop your app:
+
+```
+$ docker stop example-container-1
+```
 
 
 
