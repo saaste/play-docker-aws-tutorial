@@ -144,29 +144,35 @@ After logging in, select `EC2 (Virtual Servers in the Cloud)` from the service l
 Next, click `Launch Instance` button. This will start a wizard.
 
 ** Step 1: Choose an Amazon Machine Image (AMI) **
+
 From the list select the first option which should be Amazon Linux AMI. Notice, that this AMI is included in the free tier which means you can try and run it for free.
 
 ** Step 2: Choose an Instance Type **
+
 By default t2.micro type is selected. If it is not, select it. This *free* option is good testing and playing around.
 
 Click `Next: Configure Instance Details` to continue.
 
 ** Step 3: Configure Instance Details **
+
 Make sure the number of instances is `1`.
 
 Click `Next: Add Storage` to continue.
 
 ** Step 4: Add Storage **
+
 In here you can accept the default values. You should have one Root volume and nothing more.
 
 Click `Next: Tag Instance`
 
 ** Step 5: Tag Instance **
+
 You don't have to do anything here.
 
 Click `Next: Configure Security Group`
 
 ** Step 6: Configure Security Group **
+
 You have to create a new security group which basically defines what kind of inbound trafic is allowed to your instance. By default SSH is enabled from *anywhere*.
 
 Because our plan is to run a web app, we need to open port for it. Click `Add Rule` and select `HTTP type`. That is all you have to do.
@@ -174,6 +180,7 @@ Because our plan is to run a web app, we need to open port for it. Click `Add Ru
 Click `Review and Launch` to continue.
 
 ** Step 7: Review Instance Launch **
+
 Amazon will nag you about the open SSH but this is just a testing instance, you don't have to worry about it. You can review all the things you did and finally click `Launch`
 
 You will probably get a popup asking about key pair. We assume you don't have it yet so select `Create a new key pair`. Then give a name for your key pair. In this tutorial we assume the key is called `test-aws-key`. Click `Download Key Pair`
