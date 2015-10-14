@@ -13,7 +13,7 @@ Create a new app using `Activator`
 ```
 $ activator new example-app-1 play-scala
 ```
-This command creates a new project using play-scala template. Template is fetched from Typesafe template repository (http://typesafe.com/activator/templates). You can see the actual template in https://typesafe.com/activator/template/play-scala.
+This command creates a new project using play-scala template. Template is fetched from Typesafe [template repository](http://typesafe.com/activator/templates). Check out the [actual template](https://typesafe.com/activator/template/play-scala).
 
 
 Run the application so you can see it is working
