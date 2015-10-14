@@ -13,7 +13,10 @@ Create a new app using `Activator`
 ```
 $ activator new example-app-1 play-scala
 ```
-Test that the app is working
+This command creates a new project using play-scala template. Template is fetched from Typesafe template repository (http://typesafe.com/activator/templates). You can see the actual template in https://typesafe.com/activator/template/play-scala.
+
+
+Run the application so you can see it is working
 
 ```
 $ cd example-app-1
@@ -30,10 +33,11 @@ You should get the following result:
 (Server started, use Ctrl+D to stop and go back to the console...)
 ```
 
-Open browser and go to http://localhost:9000/ and you should see the following page.
+Open browser and go to `http://localhost:9000/` and you should see the following page.
 
 ![image](images/play-default-page.png)
 
+Your Play app is now created! That was simple!
 
 ## Step 2: Create a new Docker container
 **TODO**
