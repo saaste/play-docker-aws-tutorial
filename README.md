@@ -6,8 +6,8 @@ This tutorial explains how to:
 - Create a new Play project
 - Create a new Docker image
 - Run Docker image locally
-- Setup AWS EC3 instance
-- Publish Docker image to EC3 instance
+- Setup AWS EC2 instance
+- Publish Docker image to EC2 instance
 
 
 ## Step 1: Install necessary tools
@@ -68,7 +68,7 @@ $ activator docker:stage
 
 It will create `target/docker/stage` directory which contains all the required files for the Docker image.
 
-So what are **image** and **container**? A **container** is a stripped-to-basics version of a Linux operation system. An **image** is software you load into a container. You build images, but when you run it, it becomes a container.
+So what are **image** and **container**? A **container** is a stripped-to-basics version of a Linux operating system. An **image** is software you load into a container. You build images, but when you run it, it becomes a container.
 
 In that directory there is a file called `Dockerfile`. Add the following line to the file after RUN command:
 
@@ -90,6 +90,8 @@ USER daemon
 ENTRYPOINT ["bin/example-app-1"]
 CMD []
 ```
+
+This image will be based on java:latest image. It is a good idea to specify a version instead of relying on latest. But for this tutorial, we use the default value and go with the latest.
 
 Part of the Docker Toolbox is **Docker Quickstart Terminal**. Open it and run the following command in the `stage` directory:
 
@@ -138,7 +140,7 @@ $ docker stop example-container-1
 ```
 
 
-## Step 4: Setup AWS EC3 instance
+## Step 4: Setup AWS EC2 instance
 
 Go to [AWS Web Page](https://aws.amazon.com) and click `Sign In to the Console` button. From there you can create a new Amazon account or log in if you already have an account.
 
@@ -203,9 +205,9 @@ Here you can see all the instances. When know the instance is up and running whe
 One more stop to go!
 
 
-### Step 5: Publish image to EC3 instance
+### Step 5: Publish image to EC2 instance
 
-This tutorial will use [Docker Hub](https://hub.docker.com/) for storing the Docker image. First we will publish the image to Docker Hub and then we fetch it from there and save to EC3 instance.
+This tutorial will use [Docker Hub](https://hub.docker.com/) for storing the Docker image. First we will publish the image to Docker Hub and then we fetch it from there and save to EC2 instance.
 
 Create yourself a Docker Hub account if you don't have it yet and log in. You can create an account from the command line, but let's not go there.
 
