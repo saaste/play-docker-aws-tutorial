@@ -225,7 +225,7 @@ First we need to log in using docker:
 $ docker login
 ```
 
-This will asked your credentials and save them for the future use.
+This will ask your credentials and save them for the future use.
 
 Go to your `stage` folder and run the following commands:
 
