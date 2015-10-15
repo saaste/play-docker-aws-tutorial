@@ -122,9 +122,13 @@ $ docker run --name example-container-1 -d -p 80:9000 example-app-1
 
 This will create a new container by name `example-container-1` and it will serve our app in port `80`. `-d` argument makes the Docker container run in the background.
 
+
+
 But how do you open your app in browser? You need the IP address of the container. But how do you know what is the IP address?
 
-One easy way is to use the following command:
+On Linux machine you can use localhost. On Mac, docker machine is running on VirtualBox and by default port forwarding to localhost is not set.
+
+One easy way to find the IP address is to use the following command:
 
 ```
 $ docker-machine inspect default | grep IPAddress
