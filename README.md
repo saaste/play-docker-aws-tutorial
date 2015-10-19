@@ -285,6 +285,9 @@ If you open your instance IP to browser you should see the page saying `Your new
 
 You are done! Your Play application is now running on AWS!
 
+**Note for Zalando tech**: Starting EC2 instances manually and SSH into them is not the recommended way to do this. We do this manually only for the sake of learning. The recommended way is to use [STUPS](https://stups.io/).
+
+
 
 
 
