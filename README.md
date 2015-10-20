@@ -58,7 +58,15 @@ Open browser and go to `http://localhost:9000/` and you should see the following
 Your Play app is now created! That was easy!
 
 
-## Step 3: Create a new Docker container
+## Step 3: Create a new Docker image
+
+In your app root directory there is build definition file called build.sbt. This tutorial won't explain the details of the file, but we need to add one line there. Add the following line at the end of the file:
+
+```
+dockerExposedPorts := Seq(9000)
+```
+
+This line makes sure that the Docker container we will run later is listening on port 9000.
 
 Go to your app directory and run the following command:
 
@@ -70,22 +78,14 @@ It will create `target/docker/stage` directory which contains all the required f
 
 So what are **image** and **container**? A **container** is a stripped-to-basics version of a Linux operating system. An **image** is software you load into a container. You build images, but when you run it, it becomes a container.
 
-In that directory there is a file called `Dockerfile`. Add the following line to the file after RUN command:
-
-```
-EXPOSE 9000
-```
-
-After that your `Dockerfile` should look something like this:
+In that directory there is a file called `Dockerfile` which should look something like this:
 
 ```
 FROM java:latest
 WORKDIR /opt/docker
 ADD opt /opt
 RUN ["chown", "-R", "daemon:daemon", "."]
-
 EXPOSE 9000
-
 USER daemon
 ENTRYPOINT ["bin/example-app-1"]
 CMD []
