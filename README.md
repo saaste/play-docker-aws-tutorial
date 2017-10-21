@@ -1,39 +1,43 @@
 # Play / Docker / Amazon Lightsail (AWS) Tutorial for Noobs
 
-This tutorial is a step-by-step guide for total newbies. It is **NOT** a guide how to create and deploy a proper
-production app! Learn your stuff before you start deploying real apps, mmmkay?
-
 Tutorial will explains how to:
 
 - Install necessary tools (for Mac OS X)
-- Create a new Play project
-- Create a new Docker image
-- Run Docker image locally
+- Create a new play project
+- Create a new docker image
+- Run docker image locally
 - Push image to Docker Hub
-- Run docker image in Lightsail
- 
+- Run docker image on Amazon Lightsail instance
 
-Before you start, make sure you have [Lightsail](https://lightsail.aws.amazon.com)
-and [Docker Hub](https://hub.docker.com/) accounts ready. Registration does not cost anything and first Lightsail
-month is free!
+This tutorial is a step-by-step guide for total newbies. It is **NOT** a guide how to create and deploy a proper
+production app! Learn your stuff before you start deploying real apps, mmmkay?
+
+
+## Step 0: Prerequisities 
+
+Create [Amazon Lightsail][lightsail] account.
+It is free and running the smallest instance is free for the first month. After that it costs $5/month.
+
+Create [Docker Hub][dockerhub] account.
+Free account can have one private repository and unlimited number of public repositories.
+
 
 ## Step 1: Install necessary tools
 
-### Mac OS X
-
-Install [SBT](http://www.scala-sbt.org/release/docs/Installing-sbt-on-Mac.html) using Brew:
+Install [SBT][sbt] using Brew:
 
 ```bash
 $ brew install sbt@1
 ```
 
-Download [Docker for Mac](https://docs.docker.com/docker-for-mac/install/) and install it using the installer.
+Install [Docker for Mac][docker-mac] using the installer. 
 
 
-## Step 2: Create a new Play project
+## Step 2: Create a new play project
 
-Download [minimal-play2 template](https://github.com/futurice/minimal-play2) and unzip it.
-```bash
+Download [minimal-play2 template][min-play] and unzip it.
+
+```
 $ wget https://github.com/futurice/minimal-play2/archive/master.zip -O minimal-play2.zip
 $ unzip minimal-play2.zip -d my-app
 $ cd my-app
@@ -53,52 +57,56 @@ lazy val root = (project in file("."))
 ```
 
 Edit `conf/application.conf` and add a new line.
-```scala
+```
 play.filters.disabled += play.filters.hosts.AllowedHostsFilter
 ```
 
 Make sure you are in the project root and start the app. First time might take a while.
-```bash
+```
 $ sbt run
 ```
 
-You should get the following result:
-```bash
+When you see the following result, you know your app is running.
+```
 [info] p.c.s.AkkaHttpServer - Listening for HTTP on /0:0:0:0:0:0:0:0:9000
 
 (Server started, use Enter to stop and go back to the console...)
 ```
 
-Go to `http://localhost:9000` using a web browser. After a while you should
+Go to `http://localhost:9000` using your web browser. After a while you should
 see a white page with text "OK!"
 
-Your Play app is now created! That was easy!
+Your app is now created! That was easy!
 
 
-## Step 3: Create a new Docker image
+## Step 3: Create a new docker image
 
-Create a file called `Dockerfile` in your project root:
+Create a file called `Dockerfile` in your project root. Docker image will be created using this file.
 ```dockerfile
+# image is based on OpenJDK image version 8-jdk-alpine
 FROM openjdk:8-jdk-alpine
 
+# install and update bash
 RUN apk add --update bash
 
+# copy target/universal/dist directory to /app directory in your image
 COPY ./target/universal/dist /app
 
+# make port 8080 visible
 EXPOSE 8080
 
+# run /app/bin/my-app executable in port 8080
 CMD bash /app/bin/my-app -Dhttp.port=8080
-
 ```
 
-Docker image is created using this file. Basically does the following things:
-- Image is based on [openjdk image](https://hub.docker.com/_/openjdk/) version 8-jdk-alpine
-- Install and update `bash`
-- Copy `target/universal/dist` from your computer to `/app` directory in the image
-- Expose port `8080`
-- Run `bash` and then `app/bin/my-app` program with port `8080` 
+Next create a file called `build-docker-image.sh` and make it executable.
+```
+$ touch build-docker-image.sh
+$ chmod 755 build-docker-image.sh
+```
 
-Next make a file called `build-docker-image.sh`:
+This will be our helper script that builds the app, make a distribution package and prepares it for the docker image.
+Finally it builds the image it self. Content of the file should be the following: 
 ```bash
 #!/bin/bash
 
@@ -117,35 +125,30 @@ rm -rf ./tmp                                                    # Remove temp di
 cd ../..                                                        # Go back to application root
 
 docker build -t ${USERNAME}/${APP_NAME}:${VERSION} .            # Build docker image
-
 ```
-I know, it looks a bit scary but this file makes our life a bit easier so we don't have to run
-all these commands manually.
+Script takes four parameters: name of the application, version of the image and your [Docker Hub][dockerhub] username.
 
-Now you need to make that file executable.
-```bash
-$ chmod 755 build-docker-image.sh
+Now we just need to run it. Make sure to replace `YOUR_DOCKER_HUB_USERNAME` with your username! 
 ```
-
-One more step and our docker image is ready. Make sure to replace `YOUR_DOCKER_HUB_USERNAME`!
-```bash
 $ ./build-docker-image.sh my-app 0.0.1 YOUR_DOCKER_HUB_USERNAME
 ```
 
-Every time you run this script, it will build your app and make a new docker image. Just use different version
-number to separate your app versions.
-
-So what are **image** and **container**?
+So what is **image** and **container**?
 
 **Image** is a blueprint. Basically it tells what to do when new container is started.
+
 **Container** is created when you run an image. You can have multiple containers running the same image.
 
 You can think that image is the recipe and container is the cake. You can make many many cakes with the same recipe.
 
-Run the following command and verify the new image is on your computer.
+If you want to check that the image was created, run the following command:
 
-```bash
+```
 $ docker images
+```
+
+You should see something like this:
+```
 REPOSITORY              TAG                 IMAGE ID            CREATED             SIZE
 YOUR_ACCOUNT/my-app     latest              89e9d439ef8d        8 minutes ago       142MB
 ```
@@ -153,19 +156,20 @@ YOUR_ACCOUNT/my-app     latest              89e9d439ef8d        8 minutes ago   
 
 ## Step 4: Run docker image locally
 
-Run the image using the following command:
+Run the image and make a new container.
 
-```bash
+```
 $ docker run --name my-app-container -p 8080:8080 -d YOUR_DOCKER_HUB_USERNAME/my-app:0.0.1
-40d76d61e28a305c20c7646873e4e0a3aa0c621a96b57b817a2cae40cfa9415f
 ```
 
-This will create a new container by name `my-app-container` and it will serve our app in port `8080`. `-d` argument makes the Docker container run in the background.
+This will create a new container called `my-app-container`.
+It serves our app in port `8080`.
+`-d` argument makes the Docker container run in the background.
 
-Open your browser and got to `http://localhost:8080` and you should see that familiar "OK!" text.
+Open your browser and go to `http://localhost:8080` and you should see that familiar "OK!" text.
 
-If everything is OK, you can stop and remove the container:
-```bash
+Now we know our image is good to go and you can stop and remove the container.
+```
 $ docker stop my-app-container && docker rm my-app-container
 ```
 
@@ -174,20 +178,28 @@ $ docker stop my-app-container && docker rm my-app-container
 
 Go to [Docker Hub](https://hub.docker.com/) and `Create Repository`.
 
-Name of the repository has to match our image so make sure the name is `my-app` and visibility is `public`.
+Name of the repository has to match to our image so make sure the name is `my-app` and visibility is `public`.
 
 Next you need to log in to docker using your Docker Hub username and password.
-```bash
+```
 $ docker login
+```
+
+If login was successful, output should be something like this:
+```
 Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
-Username (******):
+Username (YOUR_USERNAME):
 Password: 
 Login Succeeded
 ```
 
-Now you are ready to push your image to Docker Hub. Don't worry if you see plenty of text, that is normal.
-```bash
+Now you are ready to push your image to Docker Hub.
+```
 $ docker push YOUR_DOCKER_HUB_USERNAME/my-app:0.0.1
+```
+
+You'll probably see plenty of text, but it should look like this:
+```
 The push refers to a repository [docker.io/YOUR_DOCKER_HUB_USERNAME/my-app]
 da7a39376352: Layer already exists 
 4f401f7e5f4c: Layer already exists 
@@ -195,33 +207,39 @@ da7a39376352: Layer already exists
 0.0.1: digest: sha256:cd69001c87f71c02e893799ad40e74adda58e34ff634fe110cf4bf9d12416006 size: 1370
 ```
 
-If you go to Tags tab in your my-app repo, you should now see one tag with name 0.0.1 - that is the version we used.
+If you go to [Docker Hub][dockerhub] repo and open `Tags` tab, you should see one tag with name 0.0.1.
+That is the image we just pushed. Tag name is the version we defined when we ran `./build-docker-image.sh`.
 
-## Step 6: Run docker image in Lightsail
+## Step 6: Run docker image on Amazon Lightsail instance
 
-Log in to [Amazon Lightsail](https://lightsail.aws.amazon.com) and click `Create instance` and select
-`Linux/Unix` platform and `OS Only > Amazon Linux` platform.
+Log in to [Amazon Lightsail Console][lightsail-console] and click `Create instance`.
+Select `Linux/Unix` platform and `OS Only > Amazon Linux` blueprint.
 
 Click `Add launch script` and enter following script that will install docker:
-```bash
+```
 yum update -y
 yum install -y docker
 service docker start
 ```
 
-Finally select $5 instance plan, give your instance a name and hit `Create`!
+Finally select **$5/month** instance plan, give your instance a name and hit `Create`!
 
 Wait until your instance status switches from `Pending` to `Ready`. It can take a minute or few.
 
-Then hit `Create static IP`, attach it to the instance you just made, give it a cute name and click `Create` one more time.
-Now your instance has a static IP. Sweet!
+Click `Create static IP`, attach it to your new instance, give it a cute name and click `Create`.
+Now your instance has a static IP!
 
-Go back to Lightsail home and click that small orange terminal icon next to your instance. It will open a new browser
-window which works as a terminal - no usernames or passwords!
+Go back to [home][lightsail-console] and click that small orange terminal icon next to your instance.
+It will open a new browser window which works as a terminal.
 
-All you need to do is to start the container just like you did on your local machine.
-```bash
+All you need to do is to start the container. Just like you did on your local machine except this time
+you have to run it using `sudo` command.
+```
 $ sudo docker run --name my-app-container -p 80:8080 -d YOUR_DOCKER_HUB_USERNAME/my-app:0.0.1
+```
+
+Output should look something like this:
+```
 Unable to find image 'YOUR_DOCKER_HUB_USERNAME/my-app:0.0.1' locally
 0.0.1: Pulling from YOUR_DOCKER_HUB_USERNAME/my-app
 88286f41530e: Pull complete 
@@ -236,4 +254,11 @@ Status: Downloaded newer image for YOUR_DOCKER_HUB_USERNAME/my-app:0.0.1
 
 Enter your static IP address to your browser and you should see our old friend "OK!".
 
-You are done! Your Play application is now running on Lightsail (AWS)!
+You are done! Your application is now running on Amazon Lightsail!
+
+[lightsail]: https://amazonlightsail.com
+[lightsail-console]: https://lightsail.aws.amazon.com
+[dockerhub]: https://hub.docker.com
+[sbt]: http://www.scala-sbt.org/release/docs/Installing-sbt-on-Mac.html
+[docker-mac]: https://docs.docker.com/docker-for-mac/install/
+[min-play]: https://github.com/futurice/minimal-play2
